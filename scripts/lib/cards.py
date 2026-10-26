@@ -15,7 +15,7 @@ from typing import Any, Iterable
 
 from . import quality as quality_lib, yamlmini
 
-CARD_DIRS = ("prompts", "tools", "techniques")
+CARD_DIRS = ("prompts", "tools", "techniques", "catalog")
 REQUIRED_KEYS = ("id", "name", "kind", "status", "language", "targets", "archetype", "added", "updated")
 
 

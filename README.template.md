@@ -118,6 +118,25 @@ Google Gemini、DeepSeek、智谱 GLM、Moonshot Kimi、xAI Grok、本地 Qwen /
 没有专属卡的模型不会被丢下：`universal-max-chain` 是模型无关的兜底，也是结构分最高的那张。
 `pojia recommend --model <新模型>` 会自动回落到它，不需要等仓库更新。
 
+## 卡片分两种，别搞混
+
+| 类型 | 能一键装吗 | 说明 |
+|---|---|---|
+| `kind: prompt` | ✅ 能 | 有可注入正文，`pojia apply` 或一行命令直接装 |
+| `kind: catalog` | ❌ 不能 | 只有上游元数据与链接，用于挑选与溯源 |
+
+catalog 卡是**从 2000+ 上游仓库里筛出来的入口**（当前门槛：★≥20 且确实是破甲类）。
+它不复制上游正文——一是许可证未必允许，二是复制来的正文没人验证过。
+
+确认某条可用时，用 `pojia promote` 把它提升成 prompt 卡：
+
+```bash
+pojia promote mdx-tom-gpt-instruct     # 生成骨架
+# 填入正文 → validate → build_index
+```
+
+无许可证的上游，`promote` 会直接拒绝——这条规则写在代码里，不靠自觉。
+
 ## 为什么不是又一个 awesome-list
 
 现有仓库分三类，都有同一个问题——**找得到，但用起来费劲，好不好使全靠猜**：

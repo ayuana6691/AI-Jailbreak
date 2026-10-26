@@ -15,8 +15,8 @@
     "name": { "type": "string", "minLength": 1, "maxLength": 120 },
     "kind": {
       "type": "string",
-      "enum": ["prompt", "tool", "technique"],
-      "description": "prompt=可直接注入的提示词；tool=客户端侧工具/安装器；technique=方法学文档"
+      "enum": ["prompt", "tool", "technique", "catalog"],
+      "description": "prompt=可直接注入的提示词；tool=客户端侧工具/安装器；technique=方法学文档；catalog=上游仓库的索引卡（只登记元数据与链接，不含正文）"
     },
     "summary": { "type": "string", "maxLength": 400 },
     "notes": {
@@ -52,7 +52,8 @@
         "translation",
         "abliteration",
         "client-patch",
-        "methodology"
+        "methodology",
+        "catalog"
       ]
     },
     "strength": {

@@ -74,6 +74,13 @@ const STATUS_BADGE = {
   archived: '<span class="badge muted">archived</span>',
 };
 
+const KIND_LABEL = {
+  prompt: "可装",
+  tool: "工具",
+  technique: "方法",
+  catalog: "索引卡",
+};
+
 function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, (m) => ({
     "&": "&amp;",
@@ -110,8 +117,15 @@ function renderCards() {
         ? `<a href="https://github.com/${esc(c.source.repo)}" target="_blank" rel="noopener">${esc(c.source.repo)}</a>`
         : "自建";
       const isPrompt = c.kind === "prompt";
+      const isCatalog = c.kind === "catalog";
       const win = oneLineWin(c.id, client);
       const unix = oneLineUnix(c.id, client);
+      const catalogBlock = isCatalog
+        ? `<div class="oneline"><span>提升</span>
+             <code>python cli/pojia.py promote ${esc(c.id)}</code>
+             <button data-promote="${esc(c.id)}">复制</button>
+           </div>`
+        : "";
       return `
       <article class="card">
         <header>
@@ -120,8 +134,11 @@ function renderCards() {
           <span class="armor">armor ${armor}</span>
         </header>
         <p class="meta">
-          <code>${esc(c.id)}</code> · ${esc(c.kind)} · ${esc(c.archetype || "-")} ·
+          <code>${esc(c.id)}</code> · ${esc(KIND_LABEL[c.kind] || c.kind)} · ${esc(c.archetype || "-")} ·
           model ${esc((c.targets || []).join(", "))} · client ${esc((c.clients || []).join(", "))}
+          ${isCatalog && c.source && c.source.repo
+            ? ` · <a href="https://github.com/${esc(c.source.repo)}" target="_blank" rel="noopener">上游</a>`
+            : ""}
         </p>
         <p>${esc(c.summary || "")}</p>
         ${isPrompt ? `<div class="oneline"><span>一键安装</span>
@@ -132,6 +149,7 @@ function renderCards() {
           <code>${esc(win)}</code>
           <button data-one="${esc(c.id)}" data-os="win">复制</button>
         </div>` : ""}
+        ${catalogBlock}
         <div class="actions">
           ${isPrompt ? `<button data-copy="${esc(c.id)}">复制正文</button>` : ""}
           ${isPrompt ? `<button data-cli="${esc(c.id)}">复制 CLI 命令</button>` : ""}
@@ -195,6 +213,18 @@ function renderCards() {
         await navigator.clipboard.writeText(`python cli/pojia.py apply ${card.id} --client ${client}`);
         btn.textContent = "已复制";
         setTimeout(() => (btn.textContent = "复制 CLI 命令"), 1300);
+      } catch {
+        btn.textContent = "失败";
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-promote]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(`python cli/pojia.py promote ${btn.dataset.promote}`);
+        btn.textContent = "已复制";
+        setTimeout(() => (btn.textContent = "复制"), 1300);
       } catch {
         btn.textContent = "失败";
       }

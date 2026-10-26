@@ -29,8 +29,14 @@ jobs:
         run: |
           python scripts/scan.py --limit "${{ github.event.inputs.limit || '100' }}" --keep-missing
 
+      - name: 生成 catalog 索引卡
+        run: python scripts/gen_catalog.py --min-stars 20
+
       - name: 重建索引
         run: python scripts/build_index.py
+
+      - name: 校验
+        run: python scripts/validate.py
 
       - name: 提交变化
         run: |

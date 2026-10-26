@@ -82,6 +82,7 @@ def render_tables(cards: list) -> str:
     )
     tools = sorted([c for c in cards if c.kind == "tool"], key=lambda c: c.data["name"].lower())
     techs = sorted([c for c in cards if c.kind == "technique"], key=lambda c: c.data["name"].lower())
+    catalogs = sorted([c for c in cards if c.kind == "catalog"], key=lambda c: c.id)
 
     out: list[str] = []
     out.append("### 提示词条目\n")
@@ -143,6 +144,36 @@ def render_tables(cards: list) -> str:
     else:
         for c in techs:
             out.append(f"- [{_esc(c.data['name'])}]({c.path}) — {_clip(c.data.get('summary'), 90)}")
+        out.append("")
+
+    out.append("### 上游索引卡（kind=catalog）\n")
+    if not catalogs:
+        out.append("_暂无。运行 `python scripts/gen_catalog.py` 生成。_\n")
+    else:
+        out.append(
+            f"共 {len(catalogs)} 张。这些卡**不含可注入正文**，只登记上游元数据与链接，"
+            "用于挑选与溯源；确认可靠后可提升为 `kind: prompt`。\n"
+        )
+        out.append("| 条目 | 目标模型 | 形态 | 许可 | 上游 |")
+        out.append("|---|---|---|---|---|")
+        for c in catalogs:
+            src = c.data.get("source") or {}
+            lic = src.get("license") or "未声明"
+            repo = src.get("repo") or ""
+            link = f"[{_esc(repo)}](https://github.com/{repo})" if repo else "—"
+            out.append(
+                "| "
+                + " | ".join(
+                    [
+                        _link(c),
+                        _models(c),
+                        _esc(c.data.get("archetype", "—")),
+                        _esc(lic),
+                        link,
+                    ]
+                )
+                + " |"
+            )
         out.append("")
     return "\n".join(out)
 

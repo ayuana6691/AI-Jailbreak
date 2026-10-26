@@ -555,6 +555,88 @@ def cmd_status(args) -> int:
     return 0
 
 
+def cmd_promote(args) -> int:
+    """把 catalog 卡提升为可注入的 prompt 卡。
+
+    这是从「有链接」到「能一键装」的唯一通道，所以必须显式操作：
+    catalog 卡没有正文，工具不能替用户编造，只能给出骨架让人填。
+    """
+    cards = load()
+    card = find(cards, args.id)
+    if card.kind != "catalog":
+        raise CliError(f"{card.id} 的 kind 是 {card.kind}，只有 catalog 卡需要提升")
+
+    src = card.data.get("source") or {}
+    repo = src.get("repo") or ""
+    lic = src.get("license")
+    if not lic:
+        raise CliError(
+            f"{repo} 未声明许可证。按仓库规则，无许可证的上游只能保留链接，不能落正文。\n"
+            "如果你已获得授权，请手工创建 prompt 卡并自行承担许可责任。"
+        )
+
+    target_dir = ROOT / "prompts" / "catalog-promoted"
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target = target_dir / f"{card.id}.md"
+    if target.exists() and not args.force:
+        raise CliError(f"{target.relative_to(ROOT)} 已存在，加 --force 覆盖")
+
+    if args.dry_run:
+        print(f"[dry-run] 将生成 {target.relative_to(ROOT)}")
+        return 0
+
+    body = [
+        "---",
+        f"id: {card.id}",
+        f"name: {card.data['name']} · 提升版",
+        "kind: prompt",
+        f"category: {card.data.get('category', 'Z')}",
+        f"summary: {card.data.get('summary', '')[:300]}",
+        "targets: [" + ", ".join(card.targets) + "]",
+        "clients: [all]",
+        f"archetype: {card.data.get('archetype', 'catalog')}",
+        "strength: null",
+        "status: unverified",
+        f"language: {card.data.get('language', 'multi')}",
+        "usage:",
+        "  type: system-prompt",
+        f"  install: python cli/pojia.py apply {card.id} --client codex",
+        f"  uninstall: python cli/pojia.py rollback {card.id} --client codex",
+        "source:",
+        f"  repo: {repo}",
+        f"  path: {src.get('path') or 'null'}",
+        "  commit: null",
+        f"  license: {lic}",
+        f"  url: https://github.com/{repo}",
+        "tags: [promoted, from-catalog]",
+        f"added: {card.data.get('added')}",
+        f"updated: {dt.date.today().isoformat()}",
+        "---",
+        "",
+        f"# {card.data['name']}（提升版）",
+        "",
+        f"来源：[{repo}](https://github.com/{repo}) · 许可 {lic}",
+        "",
+        "> 本卡由 `pojia promote` 生成的骨架。**正文需要你从上游核对后填入。**",
+        "> 工具不会替你搬运正文——许可证允许的是「引用与改编」，不是「无条件复制」。",
+        "",
+        "## 正文",
+        "",
+        "<!-- 在这里粘贴你从上游核对过的提示词正文 -->",
+        "",
+        "## 使用说明",
+        "",
+        "1. 正文确认无误后，把 `status` 改成 `community`（你验过）或跑过 harness 后改 `verified`；",
+        "2. 用 `python scripts/validate.py --strict` 校验；",
+        "3. 用 `python scripts/build_index.py` 重建索引。",
+        "",
+    ]
+    target.write_text("\n".join(body), encoding="utf-8", newline="\n")
+    print(f"已生成 {target.relative_to(ROOT)}")
+    print("下一步：填入正文 → python scripts/validate.py --strict → python scripts/build_index.py")
+    return 0
+
+
 def cmd_stats(args) -> int:
     cards = load()
     st = cards_lib.stats(cards)
@@ -614,7 +696,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("list", help="按条件列出条目")
-    p.add_argument("--kind", choices=["prompt", "tool", "technique"])
+    p.add_argument("--kind", choices=["prompt", "tool", "technique", "catalog"])
     p.add_argument("--status")
     p.add_argument("--archetype")
     p.add_argument("--model")
@@ -661,6 +743,12 @@ def main(argv: list[str] | None = None) -> int:
 
     p = sub.add_parser("status", help="查看当前项目装了哪些破甲")
     p.set_defaults(func=cmd_status)
+
+    p = sub.add_parser("promote", help="把 catalog 卡提升为可注入的 prompt 卡")
+    p.add_argument("id")
+    p.add_argument("--force", action="store_true")
+    p.add_argument("--dry-run", action="store_true")
+    p.set_defaults(func=cmd_promote)
 
     p = sub.add_parser("stats", help="统计")
     p.set_defaults(func=cmd_stats)

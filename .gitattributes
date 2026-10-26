@@ -26,3 +26,5 @@ manifest.json linguist-generated
 site/data.json linguist-generated
 docs/index.json linguist-generated
 docs/route.tsv linguist-generated
+docs/models.md linguist-generated
+catalog/*.md linguist-generated

@@ -118,6 +118,25 @@ Google Gemini、DeepSeek、智谱 GLM、Moonshot Kimi、xAI Grok、本地 Qwen /
 没有专属卡的模型不会被丢下：`universal-max-chain` 是模型无关的兜底，也是结构分最高的那张。
 `pojia recommend --model <新模型>` 会自动回落到它，不需要等仓库更新。
 
+## 卡片分两种，别搞混
+
+| 类型 | 能一键装吗 | 说明 |
+|---|---|---|
+| `kind: prompt` | ✅ 能 | 有可注入正文，`pojia apply` 或一行命令直接装 |
+| `kind: catalog` | ❌ 不能 | 只有上游元数据与链接，用于挑选与溯源 |
+
+catalog 卡是**从 2000+ 上游仓库里筛出来的入口**（当前门槛：★≥20 且确实是破甲类）。
+它不复制上游正文——一是许可证未必允许，二是复制来的正文没人验证过。
+
+确认某条可用时，用 `pojia promote` 把它提升成 prompt 卡：
+
+```bash
+pojia promote mdx-tom-gpt-instruct     # 生成骨架
+# 填入正文 → validate → build_index
+```
+
+无许可证的上游，`promote` 会直接拒绝——这条规则写在代码里，不靠自觉。
+
 ## 为什么不是又一个 awesome-list
 
 现有仓库分三类，都有同一个问题——**找得到，但用起来费劲，好不好使全靠猜**：
@@ -140,7 +159,7 @@ Google Gemini、DeepSeek、智谱 GLM、Moonshot Kimi、xAI Grok、本地 Qwen /
 
 | 指标 | 数值 |
 |---|---|
-| 可用条目 | 19 |
+| 可用条目 | 106 |
 | 其中已实测（verified） | 0 |
 | 提示词 / 工具 / 方法 | 10 / 5 / 4 |
 | 上游仓库目录 | 2062 |
@@ -196,6 +215,100 @@ Google Gemini、DeepSeek、智谱 GLM、Moonshot Kimi、xAI Grok、本地 Qwen /
 - [成功率怎么算：两级指标](techniques/success-rate.md) — 结构分（能算）与 armor 分（要测）分开，明确各自能回答什么问题，以及「默认装哪条」的排序规则。
 - [托管区块规范](techniques/managed-block-spec.md) — 安装器与 CLI 共用的幂等注入格式，保证跨工具可识别、可逐字卸载、可多条目共存。
 - [破甲提示词的六段结构](techniques/frame-anatomy.md) — 把市面上的破甲词拆成可组合的六段：元规则、身份、能力、边界、输出契约、恢复。拆开后才能按模型换零件。
+
+### 上游索引卡（kind=catalog）
+
+共 87 张。这些卡**不含可注入正文**，只登记上游元数据与链接，用于挑选与溯源；确认可靠后可提升为 `kind: prompt`。
+
+| 条目 | 目标模型 | 形态 | 许可 | 上游 |
+|---|---|---|---|---|
+| [2908746449/hanshuang-mac](catalog/2908746449-hanshuang-mac.md) | `all` | catalog | 未声明 | [2908746449/hanshuang-mac](https://github.com/2908746449/hanshuang-mac) |
+| [3641397194-wq/gpt6-Astra](catalog/3641397194-wq-gpt6-astra.md) | `gpt6-astra`, `claude`, `gemini`, `deepseek`… | catalog | Other | [3641397194-wq/gpt6-Astra](https://github.com/3641397194-wq/gpt6-Astra) |
+| [7API/glm-5.3-abliterated](catalog/7api-glm-5.3-abliterated.md) | `claude`, `gemini`, `deepseek`, `glm`… | abliteration | MIT License | [7API/glm-5.3-abliterated](https://github.com/7API/glm-5.3-abliterated) |
+| [7API/uncensored-ai-api](catalog/7api-uncensored-ai-api.md) | `claude`, `gemini`, `deepseek`, `glm`… | abliteration | MIT License | [7API/uncensored-ai-api](https://github.com/7API/uncensored-ai-api) |
+| [a137460387/dsh-infinite-gen-x](catalog/a137460387-dsh-infinite-gen-x.md) | `deepseek` | catalog | MIT License | [a137460387/dsh-infinite-gen-x](https://github.com/a137460387/dsh-infinite-gen-x) |
+| [ADWMC/helm-d](catalog/adwmc-helm-d.md) | `deepseek` | catalog | MIT License | [ADWMC/helm-d](https://github.com/ADWMC/helm-d) |
+| [ADWMC/helm-x](catalog/adwmc-helm-x.md) | `codex` | catalog | GNU Affero General Public License v3.0 | [ADWMC/helm-x](https://github.com/ADWMC/helm-x) |
+| [AEON-7/Qwen3.6-27B-AEON-Ultimate-Uncensored-DFlash](catalog/aeon-7-qwen3.6-27b-aeon-ultimate-uncensored-dflash.md) | `llama` | abliteration | Apache License 2.0 | [AEON-7/Qwen3.6-27B-AEON-Ultimate-Uncensored-DFlash](https://github.com/AEON-7/Qwen3.6-27B-AEON-Ultimate-Uncensored-DFlash) |
+| [AI-wan-uncensored-desktop/ai](catalog/ai-wan-uncensored-desktop-ai.md) | `all` | abliteration | MIT License | [AI-wan-uncensored-desktop/ai](https://github.com/AI-wan-uncensored-desktop/ai) |
+| [aimeoa/hanshuang-codex](catalog/aimeoa-hanshuang-codex.md) | `codex`, `gpt6-astra` | catalog | 未声明 | [aimeoa/hanshuang-codex](https://github.com/aimeoa/hanshuang-codex) |
+| [Anil-matcha/awesome-uncensored-ai-video-models](catalog/anil-matcha-awesome-uncensored-ai-video-models.md) | `all` | abliteration | Other | [Anil-matcha/awesome-uncensored-ai-video-models](https://github.com/Anil-matcha/awesome-uncensored-ai-video-models) |
+| [Baimuking/AI-Jailbreak](catalog/baimuking-ai-jailbreak.md) | `codex`, `claude`, `gemini`, `deepseek`… | catalog | Other | [Baimuking/AI-Jailbreak](https://github.com/Baimuking/AI-Jailbreak) |
+| [Bandglacontemplate/Claude-Jailbreak-Prompt](catalog/bandglacontemplate-claude-jailbreak-prompt.md) | `claude` | client-patch | 未声明 | [Bandglacontemplate/Claude-Jailbreak-Prompt](https://github.com/Bandglacontemplate/Claude-Jailbreak-Prompt) |
+| [c3cvld7aag/fujiang-dsh](catalog/c3cvld7aag-fujiang-dsh.md) | `deepseek` | catalog | Other | [c3cvld7aag/fujiang-dsh](https://github.com/c3cvld7aag/fujiang-dsh) |
+| [chAng-L19/codex-redteam-mode](catalog/chang-l19-codex-redteam-mode.md) | `codex` | methodology | MIT License | [chAng-L19/codex-redteam-mode](https://github.com/chAng-L19/codex-redteam-mode) |
+| [chen0416ccc-cpu/codex-windows-fast-patch-skill](catalog/chen0416ccc-cpu-codex-windows-fast-patch-skill.md) | `codex` | client-patch | 未声明 | [chen0416ccc-cpu/codex-windows-fast-patch-skill](https://github.com/chen0416ccc-cpu/codex-windows-fast-patch-skill) |
+| [chenxingqiang/claude-code-open](catalog/chenxingqiang-claude-code-open.md) | `claude`, `kimi` | catalog | MIT License | [chenxingqiang/claude-code-open](https://github.com/chenxingqiang/claude-code-open) |
+| [chiina66/deepseek-jailbreak](catalog/chiina66-deepseek-jailbreak.md) | `deepseek` | catalog | 未声明 | [chiina66/deepseek-jailbreak](https://github.com/chiina66/deepseek-jailbreak) |
+| [chiina66/deepseek-v4.1-jailbreak](catalog/chiina66-deepseek-v4.1-jailbreak.md) | `deepseek` | catalog | 未声明 | [chiina66/deepseek-v4.1-jailbreak](https://github.com/chiina66/deepseek-v4.1-jailbreak) |
+| [chiina66/dsh-prompt-inject](catalog/chiina66-dsh-prompt-inject.md) | `deepseek` | client-patch | MIT License | [chiina66/dsh-prompt-inject](https://github.com/chiina66/dsh-prompt-inject) |
+| [chiina66/glm5.3f-jailbreak](catalog/chiina66-glm5.3f-jailbreak.md) | `glm` | catalog | 未声明 | [chiina66/glm5.3f-jailbreak](https://github.com/chiina66/glm5.3f-jailbreak) |
+| [d4ncboz/jailbreak](catalog/d4ncboz-jailbreak.md) | `all` | catalog | 未声明 | [d4ncboz/jailbreak](https://github.com/d4ncboz/jailbreak) |
+| [daha1216/dsh-adult-tension](catalog/daha1216-dsh-adult-tension.md) | `deepseek` | catalog | 未声明 | [daha1216/dsh-adult-tension](https://github.com/daha1216/dsh-adult-tension) |
+| [DevCop95/cYHBeriteratus](catalog/devcop95-cyhberiteratus.md) | `all` | abliteration | MIT License | [DevCop95/cYHBeriteratus](https://github.com/DevCop95/cYHBeriteratus) |
+| [DominikBucko/qwen38-flash-next-2x3090](catalog/dominikbucko-qwen38-flash-next-2x3090.md) | `llama` | abliteration | Apache License 2.0 | [DominikBucko/qwen38-flash-next-2x3090](https://github.com/DominikBucko/qwen38-flash-next-2x3090) |
+| [drowzeys/keys-vLLm.0.27.1-GLM-5.3-Flash-NVFP4-NVFP4KV-1M-Context-Abliterated](catalog/drowzeys-keys-vllm.0.27.1-glm-5.3-flash-nvfp4-nvfp4kv-1m-context.md) | `glm` | abliteration | Apache License 2.0 | [drowzeys/keys-vLLm.0.27.1-GLM-5.3-Flash-NVFP4-NVFP4KV-1M-Context-Abliterated](https://github.com/drowzeys/keys-vLLm.0.27.1-GLM-5.3-Flash-NVFP4-NVFP4KV-1M-Context-Abliterated) |
+| [EasyJailbreak/EasyJailbreak](catalog/easyjailbreak-easyjailbreak.md) | `all` | catalog | GNU General Public License v3.0 | [EasyJailbreak/EasyJailbreak](https://github.com/EasyJailbreak/EasyJailbreak) |
+| [FuDie0915/Super-Instruct-Codex-5.6](catalog/fudie0915-super-instruct-codex-5.6.md) | `codex` | catalog | MIT License | [FuDie0915/Super-Instruct-Codex-5.6](https://github.com/FuDie0915/Super-Instruct-Codex-5.6) |
+| [gally16/LLM-Jailbreaking-Guide](catalog/gally16-llm-jailbreaking-guide.md) | `all` | catalog | 未声明 | [gally16/LLM-Jailbreaking-Guide](https://github.com/gally16/LLM-Jailbreaking-Guide) |
+| [GenggengSvan/Jailbreak-Observatory](catalog/genggengsvan-jailbreak-observatory.md) | `all` | catalog | 未声明 | [GenggengSvan/Jailbreak-Observatory](https://github.com/GenggengSvan/Jailbreak-Observatory) |
+| [GLAUCOMA82/OldPhoneDeck](catalog/glaucoma82-oldphonedeck.md) | `claude` | catalog | MIT License | [GLAUCOMA82/OldPhoneDeck](https://github.com/GLAUCOMA82/OldPhoneDeck) |
+| [heterodoxin/AbliteratedOutTheBox](catalog/heterodoxin-abliteratedoutthebox.md) | `llama` | abliteration | MIT License | [heterodoxin/AbliteratedOutTheBox](https://github.com/heterodoxin/AbliteratedOutTheBox) |
+| [hypersniper05/MCP-Image-Generator-Uncensored](catalog/hypersniper05-mcp-image-generator-uncensored.md) | `llama` | abliteration | MIT License | [hypersniper05/MCP-Image-Generator-Uncensored](https://github.com/hypersniper05/MCP-Image-Generator-Uncensored) |
+| [jadezane6634-ops/dsh-purge-flash](catalog/jadezane6634-ops-dsh-purge-flash.md) | `deepseek` | catalog | MIT License | [jadezane6634-ops/dsh-purge-flash](https://github.com/jadezane6634-ops/dsh-purge-flash) |
+| [JeffKeeping/dsh-purge-plus](catalog/jeffkeeping-dsh-purge-plus.md) | `deepseek` | catalog | MIT License | [JeffKeeping/dsh-purge-plus](https://github.com/JeffKeeping/dsh-purge-plus) |
+| [JeffYu55/antigravity-armor](catalog/jeffyu55-antigravity-armor.md) | `gemini` | catalog | MIT License | [JeffYu55/antigravity-armor](https://github.com/JeffYu55/antigravity-armor) |
+| [JoasASantos/Offensive-Security-AI-Models](catalog/joasasantos-offensive-security-ai-models.md) | `all` | abliteration | 未声明 | [JoasASantos/Offensive-Security-AI-Models](https://github.com/JoasASantos/Offensive-Security-AI-Models) |
+| [Just4Stickman/Jb-Prompts-Ai](catalog/just4stickman-jb-prompts-ai.md) | `gemini`, `deepseek` | catalog | Other | [Just4Stickman/Jb-Prompts-Ai](https://github.com/Just4Stickman/Jb-Prompts-Ai) |
+| [Justinuse1/pojia-breaker](catalog/justinuse1-pojia-breaker.md) | `all` | methodology | MIT License | [Justinuse1/pojia-breaker](https://github.com/Justinuse1/pojia-breaker) |
+| [langgptai/awesome-gemini-prompts](catalog/langgptai-awesome-gemini-prompts.md) | `gemini` | catalog | Creative Commons Zero v1.0 Universal | [langgptai/awesome-gemini-prompts](https://github.com/langgptai/awesome-gemini-prompts) |
+| [LanJinGod/dsh-purge](catalog/lanjingod-dsh-purge.md) | `deepseek` | catalog | MIT License | [LanJinGod/dsh-purge](https://github.com/LanJinGod/dsh-purge) |
+| [laoshu666/hermes-seagull](catalog/laoshu666-hermes-seagull.md) | `all` | methodology | MIT License | [laoshu666/hermes-seagull](https://github.com/laoshu666/hermes-seagull) |
+| [liucaimao2026/dsh-personal-directive](catalog/liucaimao2026-dsh-personal-directive.md) | `deepseek` | catalog | MIT License | [liucaimao2026/dsh-personal-directive](https://github.com/liucaimao2026/dsh-personal-directive) |
+| [liucaimao2026/Peach-instruct](catalog/liucaimao2026-peach-instruct.md) | `claude` | catalog | MIT License | [liucaimao2026/Peach-instruct](https://github.com/liucaimao2026/Peach-instruct) |
+| [lordx64/phantom-kv](catalog/lordx64-phantom-kv.md) | `all` | abliteration | MIT License | [lordx64/phantom-kv](https://github.com/lordx64/phantom-kv) |
+| [luowang-ui/dsh-purge-plus](catalog/luowang-ui-dsh-purge-plus.md) | `deepseek` | client-patch | MIT License | [luowang-ui/dsh-purge-plus](https://github.com/luowang-ui/dsh-purge-plus) |
+| [MDX-Tom/gpt-instruct](catalog/mdx-tom-gpt-instruct.md) | `codex` | catalog | MIT License | [MDX-Tom/gpt-instruct](https://github.com/MDX-Tom/gpt-instruct) |
+| [merlo-team/jailbreak](catalog/merlo-team-jailbreak.md) | `all` | catalog | 未声明 | [merlo-team/jailbreak](https://github.com/merlo-team/jailbreak) |
+| [mizaawa/ZakoProxyCLI](catalog/mizaawa-zakoproxycli.md) | `claude`, `gemini`, `deepseek`, `glm`… | catalog | MIT License | [mizaawa/ZakoProxyCLI](https://github.com/mizaawa/ZakoProxyCLI) |
+| [mmparko/dsh-purge](catalog/mmparko-dsh-purge.md) | `deepseek` | catalog | MIT License | [mmparko/dsh-purge](https://github.com/mmparko/dsh-purge) |
+| [momori777/Artemis](catalog/momori777-artemis.md) | `claude` | abliteration | Other | [momori777/Artemis](https://github.com/momori777/Artemis) |
+| [mortyandtimo/dsh-purge-plus](catalog/mortyandtimo-dsh-purge-plus.md) | `deepseek` | client-patch | MIT License | [mortyandtimo/dsh-purge-plus](https://github.com/mortyandtimo/dsh-purge-plus) |
+| [msuiche/weightless](catalog/msuiche-weightless.md) | `all` | abliteration | 未声明 | [msuiche/weightless](https://github.com/msuiche/weightless) |
+| [mtecoYY/ai-baike](catalog/mtecoyy-ai-baike.md) | `all` | catalog | 未声明 | [mtecoYY/ai-baike](https://github.com/mtecoYY/ai-baike) |
+| [NyaaCaster/NyaaChat](catalog/nyaacaster-nyaachat.md) | `all` | catalog | GNU Affero General Public License v3.0 | [NyaaCaster/NyaaChat](https://github.com/NyaaCaster/NyaaChat) |
+| [omgitsbase/llmash](catalog/omgitsbase-llmash.md) | `llama` | abliteration | MIT License | [omgitsbase/llmash](https://github.com/omgitsbase/llmash) |
+| [onehumanbeing/esp32-iphone-agent](catalog/onehumanbeing-esp32-iphone-agent.md) | `all` | catalog | MIT License | [onehumanbeing/esp32-iphone-agent](https://github.com/onehumanbeing/esp32-iphone-agent) |
+| [orailnoor/cross-platform-llm-client](catalog/orailnoor-cross-platform-llm-client.md) | `all` | abliteration | MIT License | [orailnoor/cross-platform-llm-client](https://github.com/orailnoor/cross-platform-llm-client) |
+| [Orion-zhen/abliteration](catalog/orion-zhen-abliteration.md) | `all` | abliteration | GNU General Public License v3.0 | [Orion-zhen/abliteration](https://github.com/Orion-zhen/abliteration) |
+| [Rain-kl/dsh-preset-plus](catalog/rain-kl-dsh-preset-plus.md) | `deepseek` | catalog | MIT License | [Rain-kl/dsh-preset-plus](https://github.com/Rain-kl/dsh-preset-plus) |
+| [rbxscamds-a11y/Antigravity-Jailbreak-v2](catalog/rbxscamds-a11y-antigravity-jailbreak-v2.md) | `gemini` | client-patch | 未声明 | [rbxscamds-a11y/Antigravity-Jailbreak-v2](https://github.com/rbxscamds-a11y/Antigravity-Jailbreak-v2) |
+| [routerhubSI/glm-5.3-abliterated](catalog/routerhubsi-glm-5.3-abliterated.md) | `glm` | abliteration | MIT License | [routerhubSI/glm-5.3-abliterated](https://github.com/routerhubSI/glm-5.3-abliterated) |
+| [routerhubSI/uncensored-ai-api](catalog/routerhubsi-uncensored-ai-api.md) | `claude`, `gemini`, `deepseek`, `glm`… | abliteration | MIT License | [routerhubSI/uncensored-ai-api](https://github.com/routerhubSI/uncensored-ai-api) |
+| [Scott96866870/nebula-public](catalog/scott96866870-nebula-public.md) | `codex`, `gpt6-astra` | catalog | 未声明 | [Scott96866870/nebula-public](https://github.com/Scott96866870/nebula-public) |
+| [Sekolah76/syadagentic](catalog/sekolah76-syadagentic.md) | `codex`, `claude` | abliteration | MIT License | [Sekolah76/syadagentic](https://github.com/Sekolah76/syadagentic) |
+| [ShadowHackrs/Jailbreaks-GPT-Gemini-deepseek-](catalog/shadowhackrs-jailbreaks-gpt-gemini-deepseek.md) | `claude`, `gemini`, `deepseek` | catalog | 未声明 | [ShadowHackrs/Jailbreaks-GPT-Gemini-deepseek-](https://github.com/ShadowHackrs/Jailbreaks-GPT-Gemini-deepseek-) |
+| [shi-YangYang/opencode-speak-freely](catalog/shi-yangyang-opencode-speak-freely.md) | `all` | abliteration | MIT License | [shi-YangYang/opencode-speak-freely](https://github.com/shi-YangYang/opencode-speak-freely) |
+| [sichang-ai/awesome-uncensored-ai](catalog/sichang-ai-awesome-uncensored-ai.md) | `all` | abliteration | Creative Commons Attribution Share Alike 4.0 International | [sichang-ai/awesome-uncensored-ai](https://github.com/sichang-ai/awesome-uncensored-ai) |
+| [techjarves/Uncensored-Local-AI-Multiplatform](catalog/techjarves-uncensored-local-ai-multiplatform.md) | `all` | abliteration | 未声明 | [techjarves/Uncensored-Local-AI-Multiplatform](https://github.com/techjarves/Uncensored-Local-AI-Multiplatform) |
+| [tjcrims0nx/annihilation-llm](catalog/tjcrims0nx-annihilation-llm.md) | `all` | abliteration | GNU Affero General Public License v3.0 | [tjcrims0nx/annihilation-llm](https://github.com/tjcrims0nx/annihilation-llm) |
+| [wangyingjie-wyj/dsh-pj-pack](catalog/wangyingjie-wyj-dsh-pj-pack.md) | `codex`, `deepseek` | catalog | Other | [wangyingjie-wyj/dsh-pj-pack](https://github.com/wangyingjie-wyj/dsh-pj-pack) |
+| [wangyingjie-wyj/hanshuang-pojia-release](catalog/wangyingjie-wyj-hanshuang-pojia-release.md) | `all` | catalog | 未声明 | [wangyingjie-wyj/hanshuang-pojia-release](https://github.com/wangyingjie-wyj/hanshuang-pojia-release) |
+| [WoYun520/dsh-purge](catalog/woyun520-dsh-purge.md) | `deepseek` | catalog | MIT License | [WoYun520/dsh-purge](https://github.com/WoYun520/dsh-purge) |
+| [wuwangzhang1216/abliterix](catalog/wuwangzhang1216-abliterix.md) | `all` | abliteration | GNU Affero General Public License v3.0 | [wuwangzhang1216/abliterix](https://github.com/wuwangzhang1216/abliterix) |
+| [xiaoguai009/codex-armor-toolkit](catalog/xiaoguai009-codex-armor-toolkit.md) | `codex`, `gpt6-astra` | catalog | 未声明 | [xiaoguai009/codex-armor-toolkit](https://github.com/xiaoguai009/codex-armor-toolkit) |
+| [xiaoshe1337-star/Xsdsh-purge](catalog/xiaoshe1337-star-xsdsh-purge.md) | `deepseek` | catalog | MIT License | [xiaoshe1337-star/Xsdsh-purge](https://github.com/xiaoshe1337-star/Xsdsh-purge) |
+| [xirui-li/DrAttack](catalog/xirui-li-drattack.md) | `all` | catalog | MIT License | [xirui-li/DrAttack](https://github.com/xirui-li/DrAttack) |
+| [xxmdd/psnb-obs](catalog/xxmdd-psnb-obs.md) | `all` | catalog | MIT License | [xxmdd/psnb-obs](https://github.com/xxmdd/psnb-obs) |
+| [YD-233/kimi-break](catalog/yd-233-kimi-break.md) | `kimi` | catalog | MIT License | [YD-233/kimi-break](https://github.com/YD-233/kimi-break) |
+| [yexi-by/dsh-unrestricted](catalog/yexi-by-dsh-unrestricted.md) | `deepseek` | catalog | MIT License | [yexi-by/dsh-unrestricted](https://github.com/yexi-by/dsh-unrestricted) |
+| [YuJunZhiXue/dsh-purge](catalog/yujunzhixue-dsh-purge.md) | `deepseek` | catalog | Apache License 2.0 | [YuJunZhiXue/dsh-purge](https://github.com/YuJunZhiXue/dsh-purge) |
+| [YuQii-111/ZCodeDeployNew](catalog/yuqii-111-zcodedeploynew.md) | `glm` | catalog | 未声明 | [YuQii-111/ZCodeDeployNew](https://github.com/YuQii-111/ZCodeDeployNew) |
+| [z91772524-ai/dsh-pojia-mode](catalog/z91772524-ai-dsh-pojia-mode.md) | `deepseek` | catalog | MIT License | [z91772524-ai/dsh-pojia-mode](https://github.com/z91772524-ai/dsh-pojia-mode) |
+| [z91772524-ai/pojia-next](catalog/z91772524-ai-pojia-next.md) | `codex`, `claude`, `deepseek`, `glm` | catalog | MIT License | [z91772524-ai/pojia-next](https://github.com/z91772524-ai/pojia-next) |
+| [z91772524-ai/pojia-next-mac](catalog/z91772524-ai-pojia-next-mac.md) | `codex` | catalog | MIT License | [z91772524-ai/pojia-next-mac](https://github.com/z91772524-ai/pojia-next-mac) |
+| [zgx949/ai-pojia](catalog/zgx949-ai-pojia.md) | `all` | catalog | MIT License | [zgx949/ai-pojia](https://github.com/zgx949/ai-pojia) |
+| [ZJU-LLM-Safety/DARWIN](catalog/zju-llm-safety-darwin.md) | `all` | catalog | 未声明 | [ZJU-LLM-Safety/DARWIN](https://github.com/ZJU-LLM-Safety/DARWIN) |
 
 ### 上游仓库目录
 
