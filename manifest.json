@@ -11,7 +11,7 @@
     "prompt_text": "https://raw.githubusercontent.com/Baimuking/AI-Jailbreak/main/docs/prompts/{id}.txt"
   },
   "coverage": {
-    "upstream_repos": 1815,
+    "upstream_repos": 2062,
     "prompt_cards": 10,
     "models": [
       "all",
